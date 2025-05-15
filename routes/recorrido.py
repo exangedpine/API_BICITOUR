@@ -9,30 +9,27 @@ router = APIRouter()
 @router.post("/recorridos")
 async def crear_recorrido(recorrido: Recorrido):
     data = recorrido.dict()
-    
-    # Convertir fecha y hora a datetime.datetime
     data["fecha_hora"] = datetime.combine(data["fecha"], data["hora"])
-    
-    # Eliminar campos individuales (opcional)
     del data["fecha"]
     del data["hora"]
-
-    result = db.recorridos.insert_one(data)
+    
+    result = await db.recorridos.insert_one(data)
     return {"id": str(result.inserted_id)}
 
 @router.get("/recorridos")
 async def obtener_recorridos():
-    recorridos = list(db.recorridos.find())
+    recorridos_cursor = db.recorridos.find()
+    recorridos = await recorridos_cursor.to_list(length=None)
+
     for r in recorridos:
         r["_id"] = str(r["_id"])
-        # Convertir fecha_hora a string legible (opcional)
         if "fecha_hora" in r:
             r["fecha_hora"] = r["fecha_hora"].isoformat()
     return recorridos
 
 @router.get("/recorridos/{id}")
 async def obtener_recorrido(id: str):
-    recorrido = db.recorridos.find_one({"_id": ObjectId(id)})
+    recorrido = await db.recorridos.find_one({"_id": ObjectId(id)})
     if recorrido:
         recorrido["_id"] = str(recorrido["_id"])
         if "fecha_hora" in recorrido:
@@ -45,10 +42,11 @@ async def actualizar_recorrido(id: str, recorrido: Recorrido):
     data["fecha_hora"] = datetime.combine(data["fecha"], data["hora"])
     del data["fecha"]
     del data["hora"]
-    result = db.recorridos.update_one({"_id": ObjectId(id)}, {"$set": data})
+
+    result = await db.recorridos.update_one({"_id": ObjectId(id)}, {"$set": data})
     return {"modificado": result.modified_count}
 
 @router.delete("/recorridos/{id}")
 async def eliminar_recorrido(id: str):
-    result = db.recorridos.delete_one({"_id": ObjectId(id)})
+    result = await db.recorridos.delete_one({"_id": ObjectId(id)})
     return {"eliminado": result.deleted_count}
