@@ -1,8 +1,5 @@
-from pymongo import MongoClient
-from dotenv import load_dotenv
+from motor.motor_asyncio import AsyncIOMotorClient
 import os
 
-load_dotenv()
-
-client = MongoClient(os.getenv("MONGO_URI"))
-db = client["BiciTour"] 
+client = AsyncIOMotorClient(os.getenv("MONGODB_URI"))
+db = client["BiciTour"]
