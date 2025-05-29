@@ -25,7 +25,7 @@ async def crear_recorrido(
 ):
     # Guardar la imagen en una carpeta local
     nombre_archivo = f"{uuid4().hex}_{foto_zona_visitar.filename}"
-    ruta_guardado = f"static/uploads/{nombre_archivo}"  # Asegúrate de crear esta carpeta
+    ruta_guardado = f"static/recorridos/{nombre_archivo}"  # Asegúrate de crear esta carpeta
     os.makedirs(os.path.dirname(ruta_guardado), exist_ok=True)
 
     with open(ruta_guardado, "wb") as buffer:
