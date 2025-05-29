@@ -1,0 +1,1 @@
+Carpeta para archivos estáticos del proyecto (por ejemplo, imágenes, CSS, JS).
